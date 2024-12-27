@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .product-details {
+            max-width: 700px;
+            margin: 50px auto;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            padding: 20px;
+        }
+        .product-details img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .product-details h1 {
+            margin: 20px 0 10px;
+            color: #007BFF;
+        }
+        .product-details p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007BFF;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="product-details" id="product-details">
+        <div class="loader" id="loader"></div>
+    </div>
+    <a href="index.html" class="back-button">Back to Products</a>
+
+    <script>
+        async function fetchProduct() {
+            const urlParams = new URLSearchParams(window.location.search)
+            const productId = urlParams.get('id')
+
+            if (!productId) {
+                document.getElementById('product-details').innerHTML = '<p>Product not found!</p>'
+                return
+            }
+
+            try {
+                const response = await fetch(`https://fakestoreapi.com/products/${productId}`)
+                const product = await response.json()
+                displayProductDetails(product)
+            } catch (error) {
+                console.error('Error fetching product details:', error)
+                document.getElementById('product-details').innerHTML = '<p>Error loading product details. Please try again later.</p>'
+            }
+        }
+
+        function displayProductDetails(product) {
+            const loader = document.getElementById('loader')
+            loader.style.display = 'none';
+
+            const detailsContainer = document.getElementById('product-details')
+            detailsContainer.innerHTML = `
+                <img src="${product.image}" alt="${product.title}">
+                <h1>${product.title}</h1>
+                <p><strong>Category:</strong> ${product.category}</p>
+                <p><strong>Price:</strong> $${product.price}</p>
+                <p>${product.description}</p>
+            `
+        }
+
+        fetchProduct()
+    </script>
+</body>
+</html>
